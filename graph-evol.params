@@ -1,6 +1,6 @@
 breedthreads = 1
 evalthreads  = 1
-seed.0       = 3333
+seed.0       = 332
 
 state        = ec.simple.SimpleEvolutionState
 pop		     = ec.Population

@@ -1,6 +1,7 @@
 package ec.graph;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import ec.BreedingPipeline;
@@ -58,6 +59,8 @@ public class GraphMergePipeline extends BreedingPipeline {
         for(int q=start,x=0; q < nMin + start; q++,x++) {
         		GraphIndividual g1 = ((GraphIndividual)inds1[x]);
         		GraphIndividual g2 = ((GraphIndividual)inds2[x]);
+        		
+        		float[] newWeights = weightCrossover(g1, g2, init.random);
 
         		GraphIndividual newG = mergeGraphs(g1, g2, init);
         		GraphSpecies species = (GraphSpecies) newG.species;
@@ -97,5 +100,16 @@ public class GraphMergePipeline extends BreedingPipeline {
 		}
 		init.removeDanglingNodes(newG);
 		return newG;
+	}
+	
+	private float[] weightCrossover(GraphIndividual g1, GraphIndividual g2, Random random){
+	    float[] newWeights = new float[GraphInitializer.numWeights];
+	    // Select crossover point
+	    int crossoverPoint = random.nextInt(GraphInitializer.numWeights);
+	    // Copy first chunk
+	    System.arraycopy( g1.weights, 0, newWeights, 0, crossoverPoint );
+	    // Copy second chunk
+	    System.arraycopy( g2.weights, crossoverPoint, newWeights, crossoverPoint, GraphInitializer.numWeights - crossoverPoint);
+	    return newWeights;
 	}
 }

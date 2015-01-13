@@ -1,17 +1,13 @@
 package ec.graph;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
-import ec.ECDefaults;
-import ec.Fitness;
 import ec.Individual;
-import ec.Prototype;
-import ec.simple.SimpleDefaults;
 import ec.simple.SimpleFitness;
 import ec.util.Parameter;
 
@@ -22,6 +18,7 @@ public class GraphIndividual extends Individual {
 	public List<Edge> edgeList = new ArrayList<Edge>();
 	public List<Edge> considerableEdgeList = new ArrayList<Edge>();
 	public Set<Node> unused;
+	public float[] weights = new float[GraphInitializer.numWeights];
 
 	public GraphIndividual(){
 		super();
@@ -29,11 +26,13 @@ public class GraphIndividual extends Individual {
 		super.species = new GraphSpecies();
 	}
 
-	public GraphIndividual(Set<Node> unused) {
+	public GraphIndividual(Set<Node> unused, Random random) {
 		super();
 		super.fitness = new SimpleFitness();
 		super.species = new GraphSpecies();
 		this.unused = unused;
+		for (int i = 0; i < weights.length; i++)
+		    weights[i] = random.nextFloat();
 	}
 
 	@Override

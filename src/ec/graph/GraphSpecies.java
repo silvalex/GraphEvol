@@ -29,7 +29,7 @@ public class GraphSpecies extends Species {
 		GraphInitializer init = (GraphInitializer) state.initializer;
 		Set<Node> unused = new HashSet<Node>(init.relevant);
 
-		GraphIndividual newGraph = new GraphIndividual(unused);
+		GraphIndividual newGraph = new GraphIndividual(unused, init.random);
 		Node start = init.startNode.clone();
 		Node end   = init.endNode.clone();
 
@@ -41,14 +41,14 @@ public class GraphSpecies extends Species {
 
 		Set<Node> seenNodes = new HashSet<Node>();
 		Set<Node> relevant = init.relevant;
-		List<Node> candidateList = new ArrayList<Node>();
+		List<ListItem> candidateList = new ArrayList<ListItem>();
 
 		if (mergedGraph != null)
-			addToCandidateListFromEdges(start, mergedGraph, seenNodes, candidateList);
+			addToCandidateListFromEdges(start, mergedGraph, seenNodes, candidateList, init);
 		else
-			addToCandidateList(start, seenNodes, relevant, candidateList, init);
+			addToCandidateList(start, seenNodes, relevant, candidateList, init, newGraph);
 
-		Collections.shuffle(candidateList, init.random);
+		Collections.sort(candidateList);
 
 		// While end cannot be connected to graph
 		while(!currentEndInputs.containsAll(end.getInputs())) {
@@ -58,7 +58,7 @@ public class GraphSpecies extends Species {
 
 			candidateLoop:
 			for (index = 0; index < candidateList.size(); index++) {
-				Node candidate = candidateList.get(index).clone();
+				Node candidate = candidateList.get(index).node.clone();
 				// For all of the candidate inputs, check that there is a service already in the graph
 				// that can satisfy it
 				connections.clear();
@@ -94,15 +94,15 @@ public class GraphSpecies extends Species {
 				// Connect candidate to graph, adding its reachable services to the candidate list
 				connectCandidateToGraphByInputs(candidate, connections, newGraph, currentEndInputs, init);
 				if (mergedGraph != null)
-					addToCandidateListFromEdges(candidate, mergedGraph, seenNodes, candidateList);
+					addToCandidateListFromEdges(candidate, mergedGraph, seenNodes, candidateList, init);
 				else
-					addToCandidateList(candidate, seenNodes, relevant, candidateList, init);
+					addToCandidateList(candidate, seenNodes, relevant, candidateList, init, newGraph);
 
 				break;
 			}
 
 			candidateList.remove(index);
-			Collections.shuffle(candidateList, init.random);
+			Collections.sort(candidateList);
 		}
 
 		// Connect end node to graph
@@ -142,7 +142,7 @@ public class GraphSpecies extends Species {
 		return newGraph;
 	}
 
-	private void addToCandidateListFromEdges (Node n, GraphIndividual mergedGraph, Set<Node> seenNode, List<Node> candidateList) {
+	private void addToCandidateListFromEdges (Node n, GraphIndividual mergedGraph, Set<Node> seenNode, List<ListItem> candidateList, GraphInitializer init) {
 		seenNode.add(n);
 
 		Node original = mergedGraph.nodeMap.get(n.getName());
@@ -151,7 +151,7 @@ public class GraphSpecies extends Species {
 			// Add servicesWithInput from taxonomy node as potential candidates to be connected
 			Node current = e.getToNode();
 			if (!seenNode.contains(current)) {
-				candidateList.add(current);
+				candidateList.add(new ListItem(current, mergedGraph.weights[init.serviceToIndexMapping.get(current.getName())]));
 				seenNode.add(current);
 			}
 		}
@@ -198,7 +198,7 @@ public class GraphSpecies extends Species {
 		graph.unused.remove(candidate);
 	}
 
-	private void addToCandidateList(Node n, Set<Node> seenNode, Set<Node> relevant, List<Node> candidateList, GraphInitializer init) {
+	private void addToCandidateList(Node n, Set<Node> seenNode, Set<Node> relevant, List<ListItem> candidateList, GraphInitializer init, GraphIndividual graph) {
 		seenNode.add(n);
 		List<TaxonomyNode> taxonomyOutputs;
 		if (n.getName().equals("start"))
@@ -210,7 +210,7 @@ public class GraphSpecies extends Species {
 			// Add servicesWithInput from taxonomy node as potential candidates to be connected
 			for (Node current : t.servicesWithInput) {
 				if (!seenNode.contains(current) && relevant.contains(current)) {
-					candidateList.add(current);
+					candidateList.add(new ListItem(current, graph.weights[init.serviceToIndexMapping.get(current.getName())]));
 					seenNode.add(current);
 				}
 			}

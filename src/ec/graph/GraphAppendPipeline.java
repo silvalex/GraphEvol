@@ -1,16 +1,11 @@
 package ec.graph;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import ec.BreedingPipeline;
-import ec.ECDefaults;
 import ec.EvolutionState;
 import ec.Individual;
 import ec.util.Parameter;
@@ -92,6 +87,7 @@ public class GraphAppendPipeline extends BreedingPipeline {
 					}
 					// Connect candidate to graph
 					((GraphSpecies)graph.species).appendCandidateToGraphByInputs(candidate, connections, graph);
+					graph.weights[init.serviceToIndexMapping.get(candidate.getName())] = init.random.nextFloat();
 					break;
 				}
 			}

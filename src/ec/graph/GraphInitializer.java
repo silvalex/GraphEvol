@@ -4,14 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Random;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,7 +22,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
-import ec.graph.TaxonomyNode;
 import ec.EvolutionState;
 import ec.simple.SimpleInitializer;
 import ec.util.Parameter;
@@ -44,6 +41,9 @@ public class GraphInitializer extends SimpleInitializer {
 	public Node startNode;
 	public Node endNode;
 	public GraphRandom random;
+	
+	public static int numWeights;
+	public Map<String, Integer> serviceToIndexMapping = new HashMap<String, Integer>();
 
 	public final double minAvailability = 0.0;
 	public double maxAvailability = -1.0;
@@ -92,6 +92,12 @@ public class GraphInitializer extends SimpleInitializer {
 
 		populateTaxonomyTree();
 		relevant = getRelevantServices(serviceMap, taskInput, taskOutput);
+		numWeights = relevant.size() + 1;
+	    int i = 0;
+        for (Node r : relevant) {
+            serviceToIndexMapping.put(r.getName(), i++);
+        }
+        serviceToIndexMapping.put(endNode.getName(), i++);
 		calculateNormalisationBounds(relevant);
 	}
 
