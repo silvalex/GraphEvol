@@ -25,7 +25,7 @@ stat.do-final           = true
 
 pop.subpops		                    = 1
 pop.subpop.0	                    = ec.Subpopulation
-pop.subpop.0.size 		            = 500
+pop.subpop.0.size 		            = 20
 pop.subpop.0.duplicate-retries 	    = 0
 pop.subpop.0.species 		        = ec.graph.GraphSpecies
 pop.subpop.0.species.ind	        = ec.graph.GraphIndividual
@@ -46,7 +46,7 @@ pop.subpop.0.species.pipe.source.0.source.0	   = ec.select.TournamentSelection
 pop.subpop.0.species.pipe.source.0.source.1	   = ec.select.TournamentSelection
 pop.subpop.0.species.pipe.source.1.source.0	   = ec.select.TournamentSelection
 pop.subpop.0.species.pipe.source.2.source.0	   = ec.select.TournamentSelection
-breed.elite.0                                  = 0
+breed.elite.0                                  = 2
 select.tournament.size                         = 2
 
 eval.problem         = ec.graph.GraphEvol
@@ -67,4 +67,4 @@ find-concepts        = true
 ideal-path-length    = 0
 ideal-num-atomic     = 0
 num-nodes-mutation   = 2
-dynamic-normalisation = true
+dynamic-normalisation = false
