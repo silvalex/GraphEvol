@@ -2,10 +2,10 @@
 
 NUM_RUNS=50
 
-for i in {1..5}
-do
+#for i in {1..5}
+#do
   #qsub -t 1-$NUM_RUNS:1 graph_ops_noqos.sh ~/workspace/GreedyGPNoQoS/owls owls-graph-noqos${i} graph-evol-noqos.params true false owlsTCTask${i}.xml owlsTCTaxonomy.xml owlsTCServices.xml;
-done
+#done
 
 for i in 1 2 5
 do
