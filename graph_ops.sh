@@ -16,6 +16,9 @@
 # Check we have somewhere to work now and if we don't, exit nicely.
 #
 
+# If the script is not working, double-check that this ID retrieval is correct (I think it was
+# written to work with arrays of jobs, which the grid admin no longer wants us to use). The
+# technical nodes will show how to do this in the case without arrays of jobs.
 if [ -d /local/tmp/sawczualex/$JOB_ID.$SGE_TASK_ID ]; then
         cd /local/tmp/sawczualex/$JOB_ID.$SGE_TASK_ID
 else
@@ -76,6 +79,8 @@ ls -la
 DIR_HOME="/u/students/sawczualex/"
 DIR_GRID="/vol/grid-solar/sgeusers/sawczualex/"
 DIR_WORKSPACE="workspace/"
+# It may be easier/safer to copy all of your files ahead of time to your grid directory (instead of
+# doing what I am doing here), so you don't have to copy them across servers when the running the jobs.
 DIR_PROGRAM=$DIR_HOME$DIR_WORKSPACE/"GraphEvol/"
 ECJ_JAR=$DIR_HOME$DIR_WORKSPACE/"Library/ecj.23.jar"
 DIR_OUTPUT=$DIR_GRID$2 # Name of directory containing output
@@ -104,6 +109,10 @@ seed=$SGE_TASK_ID
 result=$FILE_RESULT_PREFIX$seed.stat
 stats=$FILE_STATS_PREFIX$seed.stat
 
+# Here we are running a Java program via the command line, specifying the classpath to include the program jar plus
+# another required jar. In this program, the entry point is in class ec.Evolve. The program also allows us to specify
+# some arguments that have their own syntax (e.g. -file, -p, etc). Note that we are using the task ID for this grid
+# job as our random seed, which makes it easy to keep track of / recreate if necessary.
 java -cp program.jar:ecj.23.jar:. ec.Evolve -file $3 -p seed.0=$seed -p stat.file=\$$result -p stat.histogram=\$$hist_result
 
 echo ==AND NOW, HAVING DONE SOMETHING USEFUL AND CREATED SOME OUTPUT==
@@ -115,7 +124,7 @@ if [ ! -d $DIR_OUTPUT ]; then
 fi
 cp *.stat $DIR_OUTPUT
 
-# Also copy over the parameter file, so we preserve the settings
+# Also copy over the parameter file, so we know what the evolutionary settings were
 cp graph-evol.params $DIR_OUTPUT
 
 echo "Ran through OK"
